@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
@@ -7,13 +8,12 @@ from ..schemas.auth import (
     UserCreate, UserLogin, UserResponse, Token, 
     EmailVerificationRequest, EmailVerificationConfirm
 )
-from ..services.auth_service import AuthService
-from ..dependencies import get_current_user
+from ..services.auth import AuthService, get_current_user
 
-router = APIRouter(prefix="/auth", tags=["authentication"])
+router = APIRouter(prefix="/api/auth", tags=["authentication"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def register(
     user_data: UserCreate,
     db: AsyncSession = Depends(get_db)
@@ -21,10 +21,21 @@ async def register(
     """Register a new user"""
     auth_service = AuthService(db)
     user = await auth_service.register_user(user_data)
-    return user
+    
+    return {
+        "user": {
+            "id": str(user.id),
+            "email": user.email,
+            "name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email,
+            "role": "user",
+            "created_at": user.created_at.isoformat()
+        },
+        "token": auth_service.create_access_token(data={"sub": user.email}),
+        "message": "Registration successful"
+    }
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=dict)
 async def login(
     login_data: UserLogin,
     db: AsyncSession = Depends(get_db)
@@ -34,9 +45,15 @@ async def login(
     result = await auth_service.login_user(login_data)
     
     return {
-        "access_token": result["access_token"],
-        "refresh_token": result["refresh_token"],
-        "token_type": result["token_type"]
+        "user": {
+            "id": str(result["user"]["id"]),
+            "email": result["user"]["email"],
+            "name": result["user"]["name"],
+            "role": "user",
+            "created_at": result["user"]["created_at"]
+        },
+        "token": result["token"],
+        "message": "Login successful"
     }
 
 
@@ -73,12 +90,20 @@ async def resend_verification(
         )
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=dict)
 async def get_current_user_info(
     current_user = Depends(get_current_user)
 ):
     """Get current user information"""
-    return current_user
+    return {
+        "user": {
+            "id": str(current_user.id),
+            "email": current_user.email,
+            "name": f"{current_user.first_name or ''} {current_user.last_name or ''}".strip() or current_user.email,
+            "role": "user",
+            "created_at": current_user.created_at.isoformat()
+        }
+    }
 
 
 @router.post("/refresh", response_model=Token)

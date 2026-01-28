@@ -76,7 +76,7 @@ class LoanApplicationUpdate(BaseModel):
     emi_amount: Optional[float] = Field(None, ge=0)
     
     # Application Status
-    status: Optional[str] = Field(None, regex="^(pending|approved|rejected|under_review)$")
+    status: Optional[str] = Field(None, pattern="^(pending|approved|rejected|under_review)$")
     
     # File upload
     transaction_file_url: Optional[str] = Field(None, max_length=1000)
@@ -99,7 +99,7 @@ class TransactionRecordBase(BaseModel):
     transaction_date: Optional[datetime] = None
     description: Optional[str] = None
     amount: Optional[float] = None
-    transaction_type: Optional[str] = Field(None, regex="^(credit|debit)$")
+    transaction_type: Optional[str] = Field(None, pattern="^(credit|debit)$")
     balance: Optional[float] = None
     category: Optional[str] = Field(None, max_length=100)
 

@@ -30,7 +30,6 @@ import { loanService } from "@/services/loanService";
 import { LoanApplication } from "@/types/loan";
 import { testSupabaseConnection } from "@/utils/testSupabase";
 import { debugSupabase } from "@/utils/debugSupabase";
-import { simpleConnectionTest } from "@/utils/simpleTest";
 import { directSupabaseTest } from "@/utils/directSupabaseTest";
 
 const Apply = () => {
@@ -61,22 +60,6 @@ const Apply = () => {
     }
   };
 
-  // Simple connection test
-  const runSimpleTest = async () => {
-    console.log('🔍 Running simple connection test...');
-    const result = await simpleConnectionTest();
-    console.log('🔍 Simple test result:', result);
-    
-    if (result.success) {
-      toast.success('✅ ' + result.message);
-    } else {
-      toast.error('❌ ' + result.error);
-      if (result.fix) {
-        console.log('💡 Suggested fix:', result.fix);
-      }
-    }
-  };
-
   // Test with realistic form data
   const testRealFormData = async () => {
     console.log('🧪 Testing with realistic form data...');
@@ -92,7 +75,7 @@ const Apply = () => {
     console.log('📋 Minimal test data:', testData);
 
     try {
-      const result = await loanService.submitApplication(testData as any);
+      const result = await loanService.submitApplication(testData as LoanApplication);
       console.log('✅ Real form data test successful:', result);
       toast.success('✅ Real form data test successful!');
     } catch (error) {
@@ -116,7 +99,7 @@ const Apply = () => {
     console.log('📋 Minimal data:', minimalData);
 
     try {
-      const result = await loanService.submitApplication(minimalData as any);
+      const result = await loanService.submitApplication(minimalData as LoanApplication);
       console.log('✅ Minimal test successful:', result);
       toast.success('✅ Minimal test successful!');
     } catch (error) {
@@ -241,36 +224,36 @@ const Apply = () => {
       }
       
       // Prepare application data with proper validation
-      const applicationData: any = {
+      const applicationData: LoanApplication = {
         // Personal Information
         first_name: formData.firstName.trim(),
         last_name: formData.lastName.trim(),
         email: formData.email.trim(),
-        phone: formData.phone?.trim() || null,
-        date_of_birth: formData.dateOfBirth || null,
-        address: formData.address?.trim() || null,
-        city: formData.city?.trim() || null,
-        state: formData.state?.trim() || null,
-        zip_code: formData.zipCode?.trim() || null,
+        phone: formData.phone?.trim() || undefined,
+        date_of_birth: formData.dateOfBirth || undefined,
+        address: formData.address?.trim() || undefined,
+        city: formData.city?.trim() || undefined,
+        state: formData.state?.trim() || undefined,
+        zip_code: formData.zipCode?.trim() || undefined,
         
         // Employment Information
-        employment_status: formData.employmentStatus || null,
-        employer: formData.employer?.trim() || null,
-        job_title: formData.jobTitle?.trim() || null,
-        monthly_income: formData.monthlyIncome && !isNaN(parseFloat(formData.monthlyIncome)) ? parseFloat(formData.monthlyIncome) : null,
-        employment_duration: formData.employmentDuration || null,
+        employment_status: formData.employmentStatus || undefined,
+        employer: formData.employer?.trim() || undefined,
+        job_title: formData.jobTitle?.trim() || undefined,
+        monthly_income: formData.monthlyIncome && !isNaN(parseFloat(formData.monthlyIncome)) ? parseFloat(formData.monthlyIncome) : undefined,
+        employment_duration: formData.employmentDuration || undefined,
         
         // Loan Details
         loan_amount: parseFloat(formData.loanAmount),
-        loan_purpose: formData.loanPurpose?.trim() || null,
+        loan_purpose: formData.loanPurpose?.trim() || undefined,
         loan_term: parseInt(formData.loanTerm),
         
         // Financial Information
-        total_assets: formData.totalAssets && !isNaN(parseFloat(formData.totalAssets)) ? parseFloat(formData.totalAssets) : null,
+        total_assets: formData.totalAssets && !isNaN(parseFloat(formData.totalAssets)) ? parseFloat(formData.totalAssets) : undefined,
         has_past_debts: formData.hasPastDebts === "yes",
-        number_of_debts: formData.numberOfDebts && !isNaN(parseInt(formData.numberOfDebts)) ? parseInt(formData.numberOfDebts) : null,
+        number_of_debts: formData.numberOfDebts && !isNaN(parseInt(formData.numberOfDebts)) ? parseInt(formData.numberOfDebts) : undefined,
         has_emi: formData.hasEmi === "yes",
-        emi_amount: formData.emiAmount && !isNaN(parseFloat(formData.emiAmount)) ? parseFloat(formData.emiAmount) : null,
+        emi_amount: formData.emiAmount && !isNaN(parseFloat(formData.emiAmount)) ? parseFloat(formData.emiAmount) : undefined,
         
         // Metadata
         user_agent: navigator.userAgent,
@@ -278,8 +261,9 @@ const Apply = () => {
 
       // Remove null values to avoid issues
       Object.keys(applicationData).forEach(key => {
-        if (applicationData[key] === null) {
-          delete applicationData[key];
+        const typedKey = key as keyof LoanApplication;
+        if (applicationData[typedKey] === null || applicationData[typedKey] === undefined) {
+          delete (applicationData as Record<string, unknown>)[typedKey];
         }
       });
 
@@ -379,15 +363,6 @@ const Apply = () => {
                 className="text-xs"
               >
                 Test Connection
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={runSimpleTest}
-                className="text-xs"
-              >
-                Simple Test
               </Button>
               <Button 
                 type="button" 

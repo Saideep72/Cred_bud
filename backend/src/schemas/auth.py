@@ -17,6 +17,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=100)
+    name: str = Field(..., min_length=1, max_length=200)  # Full name field
     
     @validator('password')
     def validate_password(cls, v):

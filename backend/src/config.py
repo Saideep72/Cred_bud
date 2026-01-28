@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     email_from: str = ""
     
     # CORS
-    allowed_origins: str = "http://localhost:3000,http://localhost:5173,http://localhost:8000"
+    allowed_origins: str = "*"  # Allow all origins for private network access
     
     # App
     debug: bool = True

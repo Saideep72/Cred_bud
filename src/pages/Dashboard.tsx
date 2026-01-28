@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import {
-  User,
   Mail,
   Phone,
   MapPin,
@@ -16,19 +15,15 @@ import {
   XCircle,
   IndianRupee,
   TrendingUp,
-  TrendingDown,
   Edit,
   Download,
-  Bell,
   Shield,
   Activity,
   Target,
   Eye,
   RefreshCw,
   Info,
-  Zap,
   Award,
-  Upload,
 } from "lucide-react";
 
 const userData = {
@@ -109,7 +104,7 @@ const Dashboard = () => {
   const handleSetGoals = () => {
     const goal = prompt('What financial goal would you like to set?');
     if (goal) {
-      alert(`Goal set: "${goal}"\n\nWe\'ll help you track your progress!`);
+      alert(`Goal set: "${goal}"\n\nWe'll help you track your progress!`);
     }
   };
 
@@ -321,7 +316,7 @@ const Dashboard = () => {
                               <>
                                 <div className="text-right">
                                   <p className="text-xs text-muted-foreground">Monthly EMI</p>
-                                  <p className="font-semibold text-foreground">₹{(loan.monthlyPayment / 1000).toFixed(0)}K</p>
+                                  <p className="font-semibold text-foreground">₹{loan.monthlyPayment ? (loan.monthlyPayment / 1000).toFixed(0) : '0'}K</p>
                                 </div>
                                 <div className="flex gap-2">
                                   <Button variant="outline" size="sm" className="gap-1">
@@ -524,7 +519,7 @@ const Dashboard = () => {
                             <>
                               <div className="text-right">
                                 <p className="text-xs text-muted-foreground">Monthly EMI</p>
-                                <p className="font-semibold text-foreground">₹{(loan.monthlyPayment / 1000).toFixed(0)}K</p>
+                                <p className="font-semibold text-foreground">₹{loan.monthlyPayment ? (loan.monthlyPayment / 1000).toFixed(0) : '0'}K</p>
                               </div>
                               <div className="flex gap-2">
                                 <Button variant="outline" size="sm" className="gap-1">

@@ -229,7 +229,7 @@ const Statistics = () => {
                       border: "1px solid hsl(210, 31%, 91%)",
                       borderRadius: "12px",
                     }}
-                    formatter={(value: any, name: string) => {
+                    formatter={(value: number, name: string) => {
                       if (name === 'avgAmount') return [formatCurrency(value), 'Avg Amount'];
                       return [value, 'Applications'];
                     }}
@@ -296,8 +296,8 @@ const Statistics = () => {
                     border: "1px solid hsl(210, 31%, 91%)",
                     borderRadius: "12px",
                   }}
-                  formatter={(value: any, name: string) => {
-                    if (name === 'amount') return [formatCurrency(value), 'Total Amount'];
+                  formatter={(value: number | string, name: string) => {
+                    if (name === 'amount') return [formatCurrency(Number(value)), 'Total Amount'];
                     return [value.toLocaleString('en-IN'), name];
                   }}
                 />
@@ -350,8 +350,8 @@ const Statistics = () => {
                     border: "1px solid hsl(210, 31%, 91%)",
                     borderRadius: "12px",
                   }}
-                  formatter={(value: any, name: string) => {
-                    if (name === 'amount') return [formatCurrency(value), 'Disbursement'];
+                  formatter={(value: number | string, name: string) => {
+                    if (name === 'amount') return [formatCurrency(Number(value)), 'Disbursement'];
                     return [value.toLocaleString('en-IN'), name];
                   }}
                 />

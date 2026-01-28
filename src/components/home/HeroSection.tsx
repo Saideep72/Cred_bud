@@ -43,7 +43,7 @@ const HeroSection = () => {
               </Link>
               <Link to="/statistics">
                 <Button variant="outline" size="lg">
-                  View Bank Stats
+                  View Public Statistics
                 </Button>
               </Link>
             </div>
