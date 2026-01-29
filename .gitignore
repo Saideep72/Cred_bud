@@ -1,5 +1,5 @@
 node_modules
 PRIVATE_NETWORK_ACCESS.md
 PUBLIC_STATISTICS_ACCESS.md
-.env.docker
-.dockerignore
+
+
