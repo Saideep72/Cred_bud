@@ -6,12 +6,26 @@ import { Button } from '../components/common/Button';
 import Input from '../components/common/Input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/common/Card';
 import { toast } from 'react-hot-toast';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const Register = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { register: registerUser } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+
+    React.useEffect(() => {
+        // Test Backend Connection
+        fetch('/api/health')
+            .then(res => {
+                if (res.ok) console.log("✅ Backend Connected");
+                else console.error("❌ Backend Error:", res.status);
+            })
+            .catch(err => {
+                console.error("❌ Backend Connectivity Check Failed:", err);
+                toast.error("Warning: Cannot connect to Backend. Registration may fail.");
+            });
+    }, []);
 
     const onSubmit = async (data) => {
         setIsLoading(true);
@@ -43,6 +57,7 @@ const Register = () => {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                        {isLoading && <LoadingSpinner fullScreen text="Creating your account..." />}
                         <Input
                             label="Full Name"
                             placeholder="John Doe"

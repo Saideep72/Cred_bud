@@ -37,7 +37,7 @@ const Header = () => {
                                     Dashboard
                                 </Link>
                                 <div className="flex items-center space-x-4 ml-4">
-                                    <span className="text-sm font-medium text-gray-900">Hi, {user.name}</span>
+                                    <span className="text-sm font-medium text-gray-900">Hi, {user?.user_metadata?.full_name || 'User'}</span>
                                     <Button variant="outline" size="sm" onClick={handleLogout}>Log out</Button>
                                 </div>
                             </>

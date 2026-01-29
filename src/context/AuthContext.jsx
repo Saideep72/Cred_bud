@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const AuthContext = createContext(null);
 
@@ -48,7 +49,7 @@ export const AuthProvider = ({ children }) => {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: `${window.location.origin}/dashboard`,
+                emailRedirectTo: `${window.location.origin}`,
                 data: {
                     full_name: userData.full_name,
                     phone: userData.phone,
@@ -60,18 +61,22 @@ export const AuthProvider = ({ children }) => {
         if (error) throw error;
 
         // Create profile in backend database
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                ...userData,
-                id: data.user.id
-            }),
-        });
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...userData,
+                    id: data.user.id
+                }),
+            });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Backend registration failed');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Backend registration failed');
+            }
+        } catch (fetchError) {
+            throw new Error(`Connection to Backend Failed (${fetchError.message}). Is the backend running on port 8000?`);
         }
 
         setUser(data.user);
@@ -106,7 +111,7 @@ export const AuthProvider = ({ children }) => {
             loading,
             resendVerificationEmail
         }}>
-            {!loading && children}
+            {loading ? <LoadingSpinner fullScreen text="Verifying Session..." /> : children}
         </AuthContext.Provider>
     );
 };

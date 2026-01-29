@@ -23,7 +23,7 @@ const SidebarItem = ({ to, icon: Icon, label, onClick }) => (
 );
 
 const DashboardLayout = () => {
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
@@ -44,6 +44,12 @@ const DashboardLayout = () => {
                             <SidebarItem to="/dashboard/analytics" icon={PieChart} label="Analytics" />
                             <div className="my-4 border-t border-gray-100"></div>
                             <SidebarItem to="/dashboard/settings" icon={Settings} label="Settings" />
+
+                            <div className="px-4 py-2 mt-4 border-t border-gray-100 pt-4">
+                                <p className="text-xs font-semibold text-gray-400 uppercase">Signed in as</p>
+                                <p className="text-sm font-medium text-gray-900 truncate">{user?.user_metadata?.full_name || 'User'}</p>
+                            </div>
+
                             <button
                                 onClick={logout}
                                 className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors mb-1 text-gray-600 hover:bg-red-50 hover:text-red-600 w-full text-left"

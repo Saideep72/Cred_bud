@@ -24,7 +24,7 @@ app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/o
 if settings.CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -37,7 +37,7 @@ app.include_router(loans.router, prefix=f"{settings.API_V1_STR}/loans", tags=["l
 app.include_router(transactions.router, prefix=f"{settings.API_V1_STR}/transactions", tags=["transactions"])
 app.include_router(banks.router, prefix=f"{settings.API_V1_STR}/banks", tags=["banks"])
 
-@app.get("/health")
+@app.get(f"{settings.API_V1_STR}/health")
 async def health_check():
     return {"status": "ok"}
 

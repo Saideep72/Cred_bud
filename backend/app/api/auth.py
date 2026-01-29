@@ -14,9 +14,7 @@ router = APIRouter()
 @router.post("/register", response_model=dict)
 async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
     """Register a new user using Supabase Auth"""
-    supabase = get_supabase_client()
-    
-    try:
+
     # Note: Frontend handles Supabase Auth. We just create the local profile.
     
     try:
